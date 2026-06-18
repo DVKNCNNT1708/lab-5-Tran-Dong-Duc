@@ -1,0 +1,141 @@
+openapi: 3.1.0
+
+info:
+  title: FIT4110 Lab 05 - IoT Ingestion API
+  version: 0.5.0
+  description: OpenAPI contract for the Lab 05 IoT ingestion service.
+
+servers:
+  - url: http://localhost:8000
+    description: Local Docker Compose API
+
+tags:
+  - name: Health
+  - name: Readings
+
+paths:
+  /health:
+    get:
+      tags: [Health]
+      summary: Health check
+      responses:
+        '200':
+          description: Service healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /readings:
+    post:
+      tags: [Readings]
+      summary: Create a sensor reading
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensorReadingCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorReadingCreated'
+        '401':
+          $ref: '#/components/responses/ProblemResponse'
+
+  /readings/latest:
+    get:
+      tags: [Readings]
+      summary: Latest readings
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Latest readings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadingListResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+  responses:
+    ProblemResponse:
+      description: Problem response
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+
+  schemas:
+    HealthResponse:
+      type: object
+      required: [status, service, version]
+      properties:
+        status:
+          type: string
+        service:
+          type: string
+        version:
+          type: string
+
+    SensorReadingCreate:
+      type: object
+      required: [device_id, metric, value, timestamp]
+      properties:
+        device_id:
+          type: string
+        metric:
+          type: string
+        value:
+          type: number
+        unit:
+          type: string
+        timestamp:
+          type: string
+
+    SensorReadingCreated:
+      type: object
+      required: [reading_id, device_id, metric, accepted, created_at]
+      properties:
+        reading_id:
+          type: string
+        device_id:
+          type: string
+        metric:
+          type: string
+        accepted:
+          type: boolean
+        created_at:
+          type: string
+
+    ReadingListResponse:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+
+    ProblemDetails:
+      type: object
+      required: [type, title, status, detail]
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string

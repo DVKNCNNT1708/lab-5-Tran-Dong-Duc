@@ -1,0 +1,80 @@
+{
+  "info": {
+    "_postman_id": "2b0a6141-2b0c-4e1e-a4f9-9adfb7a7c901",
+    "name": "FIT4110 Lab 05 IoT Compose",
+    "description": "Smoke tests for the Lab 05 compose stack.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "API health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Readings",
+      "item": [
+        {
+          "name": "Create reading",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"device_id\": \"ESP32-LAB-A01\",\n  \"metric\": \"temperature\",\n  \"value\": 31.5,\n  \"timestamp\": \"2026-05-13T08:30:00+07:00\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/readings",
+              "host": ["{{baseUrl}}"],
+              "path": ["readings"]
+            }
+          }
+        },
+        {
+          "name": "Latest readings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/readings/latest?limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["readings", "latest"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
